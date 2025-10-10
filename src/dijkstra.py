@@ -1,9 +1,7 @@
 import heapq
 
 
-def uniform_cost_search(problem):
-    # Busca de Custo Uniforme - encontra o caminho com menor custo total
-    # Fila de prioridade (custo, estado, nó)
+def uniform_cost_search_corrected(problem):
     frontier = []
     node = {
         'state': problem.initial_state,
@@ -11,14 +9,20 @@ def uniform_cost_search(problem):
         'action': None,
         'cost': 0
     }
+    # Usamos um dicionário para rastrear o melhor custo e o nó correspondente
+    frontier_dict = {problem.initial_state: node}
     heapq.heappush(frontier, (0, id(node), node))
 
     explored = set()
-    frontier_states = {problem.initial_state: 0}  # estado: melhor_custo
 
     while frontier:
         current_cost, _, node = heapq.heappop(frontier)
         current_state = node['state']
+
+        # Verifica se este nó ainda é o melhor conhecido para este estado
+        if current_state in frontier_dict and frontier_dict[current_state] is not node:
+            if node['cost'] > frontier_dict[current_state]['cost']:
+                continue
 
         if problem.is_goal(current_state):
             return solution_with_cost(problem, node), node['cost']
@@ -28,25 +32,36 @@ def uniform_cost_search(problem):
 
         explored.add(current_state)
 
-        # print(f"Expandindo: {current_state} (custo acumulado: {node['cost']})")
-
         for action in problem.actions(current_state):
+
+            # Descobre qual é o estado do filho
             child_state = problem.result(current_state, action)
+
+            # Obtém o custo para ir da cidade atual até essa cidade vizinha
             step_cost = problem.get_cost(current_state, action)
-            total_cost_dijkstra = node['cost'] + step_cost
+
+            # Calcula o custo total do caminho desde a origem até o filho
+            total_cost = node['cost'] + step_cost
 
             child = {
                 'state': child_state,
                 'parent': node,
                 'action': action,
-                'cost': total_cost_dijkstra
+                'cost': total_cost
             }
 
-            # Se é um estado novo ou encontramos um caminho mais barato
-            if child_state not in explored and (child_state not in frontier_states or total_cost_dijkstra < frontier_states[child_state]):
-                heapq.heappush(frontier, (total_cost_dijkstra, id(child), child))
-                frontier_states[child_state] = total_cost_dijkstra
-                # print(f"  → Adicionado à fronteira: {child_state} (custo: {step_cost}, acumulado: {total_cost_dijkstra})")
+            if child_state in explored:
+                continue
+
+            if child_state not in frontier_dict:
+                # Adiciona à fronteira
+                frontier_dict[child_state] = child
+                heapq.heappush(frontier, (total_cost, id(child), child))
+            elif total_cost < frontier_dict[child_state]['cost']:
+                # Encontrou caminho melhor
+                old_node = frontier_dict[child_state]
+                frontier_dict[child_state] = child
+                heapq.heappush(frontier, (total_cost, id(child), child))
 
     return None, float('inf')
 

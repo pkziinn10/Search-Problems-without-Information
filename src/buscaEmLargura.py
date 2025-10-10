@@ -20,11 +20,11 @@ def bfs(problem):
     frontier = deque([node])
     explored = set()
 
-    # Para otimização: conjunto separado para estados na fronteira
+    # Para otimização para eliminar estados duplicados
     frontier_states = {problem.initial_state}
 
     while frontier:
-        node = frontier.popleft()  # Removendo o primeiro elemento da fronteira
+        node = frontier.popleft()  # Removendo o nó mais antigo da borda
         current_state = node['state']
         frontier_states.remove(current_state)
         explored.add(current_state)
@@ -33,8 +33,14 @@ def bfs(problem):
 
         # Expande os filhos (cidades vizinhas)
         for action in problem.actions(current_state):
+
+            # Descobre qual é o estado do filho
             child_state = problem.result(current_state, action)
+
+            # Obtém o custo para ir da cidade atual até essa cidade vizinha
             step_cost = problem.get_cost(current_state, action)
+
+            # Calcula o custo total do caminho desde a origem até o filho
             total_cost = node['cost'] + step_cost
 
             child = {
@@ -73,12 +79,10 @@ def solution_with_cost(problem, node):
         path.append(path_info)
         current = current['parent']
 
-    # Inverte o caminho (da origem ao destino)
     path.reverse()
     return path
 
 def print_solution_bfs(path, total_cost):
-    # Imprime a solução de forma organizada
     if not path:
         print("Nenhuma solução encontrada!")
         return
