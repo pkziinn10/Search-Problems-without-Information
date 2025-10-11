@@ -1,7 +1,7 @@
 import heapq
 
 
-def uniform_cost_search_corrected(problem):
+def uniform_cost_search(problem):
     frontier = []
     node = {
         'state': problem.initial_state,
