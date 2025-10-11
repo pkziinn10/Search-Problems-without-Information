@@ -99,7 +99,7 @@ def print_solution_bfs(path, total_cost):
 
     for i, step in enumerate(path):
         if i == 0:
-            print(f"📍 Início em: {step['city']}")
+            print(f" Início em: {step['city']}")
         else:
             prev_city = path[i-1]['city']
             print(f" → para {step['city']} "
