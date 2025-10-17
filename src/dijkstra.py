@@ -1,5 +1,5 @@
 import heapq
-
+from utils import solution_with_cost, print_solution_generic
 
 def uniform_cost_search(problem):
     frontier = []
@@ -65,48 +65,6 @@ def uniform_cost_search(problem):
 
     return None, float('inf')
 
-def solution_with_cost(problem, node):
-    # Reconstrói o caminho completo
-    path_dijkstra = []
-    current = node
-
-    while current:
-        path_info = {
-            'city': current['state'],
-            'action': current['action'],
-            'step_cost': 0 if current['parent'] is None else
-                        problem.get_cost(current['parent']['state'], current['state']),
-            'total_cost_dijkstra': current['cost']
-        }
-        path_dijkstra.append(path_info)
-        current = current['parent']
-
-    path_dijkstra.reverse()
-    return path_dijkstra
-
 def print_solution(path_dijkstra, total_cost_dijkstra):
-    # Imprime a solução de forma organizada
-    if not path_dijkstra:
-        print("Nenhuma solução encontrada!")
-        return
-
-    print("\n" + "="*60)
-    print("SOLUÇÃO - BUSCA DE CUSTO UNIFORME")
-    print("="*60)
-
-    print(f"De: {path_dijkstra[0]['city']} → Para: {path_dijkstra[-1]['city']}")
-    print(f"Custo total: {total_cost_dijkstra} km")
-    print(f"Número de cidades no caminho: {len(path_dijkstra)}")
-    print("\nCaminho detalhado:")
-    print("-" * 40)
-
-    for i, step in enumerate(path_dijkstra):
-        if i == 0:
-            print(f" Início em: {step['city']}")
-        else:
-            prev_city = path_dijkstra[i-1]['city']
-            print(f"  → {step['action']} para {step['city']} "
-                  f"({step['step_cost']} km) "
-                  f"[Acumulado: {step['total_cost_dijkstra']} km]")
-
-    print("="*60)
+    # Wrapper para a função de impressão genérica
+    print_solution_generic(path_dijkstra, total_cost_dijkstra, "Busca de Custo Uniforme")
