@@ -64,5 +64,27 @@ def bfs(problem):
     return None, float('inf')
 
 def print_solution_bfs(path, total_cost):
-    # Wrapper para a função de impressão genérica
-    print_solution_generic(path, total_cost, "Busca em Largura")
+    if not path:
+        print("Nenhuma solução encontrada!")
+        return
+
+    print("\n" + "="*60)
+    print("SOLUÇÃO ENCONTRADA - BUSCA EM LARGURA")
+    print("="*60)
+
+    print(f"De: {path[0]['city']} → Para: {path[-1]['city']}")
+    print(f"Custo total: {total_cost} km")
+    print(f"Número de cidades no caminho: {len(path)}")
+    print("\nCaminho detalhado:")
+    print("-" * 40)
+
+    for i, step in enumerate(path):
+        if i == 0:
+            print(f"Início em: {step['city']}")
+        else:
+            prev_city = path[i-1]['city']
+            print(f" → para {step['city']} "
+                  f"({step['step_cost']} km) "
+                  f"[Acumulado: {step['total_cost']} km]")
+
+    print("="*60)
